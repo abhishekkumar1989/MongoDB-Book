@@ -1,0 +1,44 @@
+Issue: There are issues for $in operator when it comes with the case multikey index. Consider following example:
+
+
+Insert following documents. Note that there are 4 documents each for { a: 1 } and { a: 2 }.
+Mongo > db.test.insert({a:1, b:1})
+Mongo > db.test.insert({a:1, b:2})
+Mongo > db.test.insert({a:1, b:3})
+Mongo > db.test.insert({a:1, b:4})
+Mongo > db.test.insert({a:2, b:1})
+Mongo > db.test.insert({a:2, b:2})
+Mongo > db.test.insert({a:2, b:3})
+Mongo > db.test.insert({a:2, b:4})
+
+Create following index:
+Mongo > db.test.ensureIndex({ a: 1, b: -1 })
+
+Running a find query:
+Mongo > db.test.find({ a: { $in: [1,2] }}).sort({ b: -1 }).limit(2).explain()
+{
+	"cursor" : "BtreeCursor a_1_b_-1 multi",
+	"isMultiKey" : false,
+	"n" : 2,
+	"nscannedObjects" : 4,
+	"nscanned" : 5,
+	...
+}
+
+Insert a document that will make the index { a: 1, b: -1 } as multikey index:
+Mongo > db.test.insert({ a: [5,6], b :1 })
+
+Running the same find query:
+Mongo > db.test.find({ a: { $in: [1,2] }}).sort({ b: -1 }).limit(2).explain()
+{
+	"cursor" : "BtreeCursor a_1_b_-1 multi",
+	"isMultiKey" : true,
+	"n" : 2,
+	"nscannedObjects" : 8,
+	"nscanned" : 8,
+	...
+}
+
+Conclusion:
+* In the 1st case, multikey index is false, whereas it is true in 2nd case.
+* check nscanned and nscannedObjects is 8 in the 2nd case. This means that all the documents for { a: 1 } and { a: 2 } got scanned.
