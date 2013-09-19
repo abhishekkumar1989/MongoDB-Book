@@ -9,3 +9,8 @@ mongo > db.adminCommand({setParameter:1, logLevel:4})	// 0 to 5 are allowed
 	
 mongo > Object.bsonsize(<document>)
 	Gives the bson document size		// It doesn't include the bson headers and padding
+
+mongo > db.test.find({"key1" : {"$gt" : 5, "$lt" : 10}}).min({"key1" : 10}).max({"key1" : 20})
+	// limit the index range scanning
+
+$setOnInsert()
