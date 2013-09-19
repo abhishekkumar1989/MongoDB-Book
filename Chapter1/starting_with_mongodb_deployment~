@@ -1,0 +1,23 @@
+Download all the latest binaries from: http://www.mongodb.org/downloads
+
+Starting the mongod server:
+$ mongod --dbpath <path-to-db-files>
+
+Starting with mongo shell:
+$ mongo
+> 
+
+The current prompt is '>'. The prompt can be changed by running following on the shell:
+> prompt = function() { 
+	return db + ":Mongo > ";
+}
+test:Mongo > 				// currently db is test database
+test:Mongo > use admin			// changing to admin database
+switched to db admin
+admin:Mongo > use test
+test:Mongo > 
+
+Inserting documents to 'coll' inside test database:
+test:Mongo > db.coll.insert({ key1: 1, key2: 1 })
+test:Mongo > db.coll.find()
+{ "_id" : ObjectId("523a9c60c539b977369641a8"), "key1" : 1, "key2" : 1 }
