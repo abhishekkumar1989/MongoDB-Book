@@ -7,3 +7,5 @@ mongo > show log rs <=> db.runCommand( { getLog : "rs" } )
 mongo > db.adminCommand({setParameter:1, logLevel:4})	// 0 to 5 are allowed
 	Change the verbosity of logging
 	
+mongo > Object.bsonsize(<document>)
+	Gives the bson document size		// It doesn't include the bson headers and padding
