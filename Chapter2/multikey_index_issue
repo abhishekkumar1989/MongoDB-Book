@@ -1,5 +1,6 @@
+----------------------------------------------------------------------------------------------------------------
 Issue: There are issues for $in operator when it comes with the case multikey index. Consider following example:
-
+----------------------------------------------------------------------------------------------------------------
 
 Insert following documents. Note that there are 4 documents each for { a: 1 } and { a: 2 }.
 Mongo > db.test.insert({a:1, b:1})
@@ -42,3 +43,33 @@ Mongo > db.test.find({ a: { $in: [1,2] }}).sort({ b: -1 }).limit(2).explain()
 Conclusion:
 * In the 1st case, multikey index is false, whereas it is true in 2nd case.
 * check nscanned and nscannedObjects is 8 in the 2nd case. This means that all the documents for { a: 1 } and { a: 2 } got scanned.
+
+-----------------------------------
+Range based query on multikey index
+-----------------------------------
+
+Inserting documents inside test collection
+Mongo > db.test.insert({ x: 20 })
+Mongo > db.test.insert({ x: [5, 25] })
+Mongo > db.test.insert({ x: 15 })
+Mongo > db.test.ensureIndex({ x: 1 })
+
+Mongo > db.test.find({x : {$gt : 5, $lt : 20}}).explain()
+{
+	"cursor" : "BtreeCursor x_1",
+	"isMultiKey" : true,
+	"indexBounds" : {
+		"x" : [
+			[
+				10,
+				1.7976931348623157e+308
+			]
+		]
+	},
+	...
+}
+
+Check the limit of x: [10, infinity), this means almost of the index range is scanned.
+
+This can be solved by providing index range:
+Mongo > db.test.find({x : {$gt : 5, $lt : 20}}).min(5).max(20)
