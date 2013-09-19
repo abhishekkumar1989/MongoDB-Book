@@ -5,6 +5,9 @@ $ mongod --dbpath <path-to-db-files>
 
 This mongod process will listen at default 27017 port.
 
+Stopping the mongod server:
+Press Ctrl+c in the shell running mongod process
+
 Starting with mongo shell:
 $ mongo
 > 
