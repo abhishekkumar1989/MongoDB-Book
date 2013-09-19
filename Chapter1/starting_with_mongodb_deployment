@@ -3,6 +3,8 @@ Download all the latest binaries from: http://www.mongodb.org/downloads
 Starting the mongod server:
 $ mongod --dbpath <path-to-db-files>
 
+This mongod process will listen at default 27017 port.
+
 Starting with mongo shell:
 $ mongo
 > 
@@ -11,13 +13,21 @@ The current prompt is '>'. The prompt can be changed by running following on the
 > prompt = function() { 
 	return db + ":Mongo > ";
 }
+
+Changing the prompt helps a lot in knowing some information while running command. For example, the above function for the prompt will display the current database we are refering.
+
 test:Mongo > 				// currently db is test database
 test:Mongo > use admin			// changing to admin database
 switched to db admin
 admin:Mongo > use test
 test:Mongo > 
 
-Inserting documents to 'coll' inside test database:
+Inserting documents to 'coll' collection of test database:
 test:Mongo > db.coll.insert({ key1: 1, key2: 1 })
 test:Mongo > db.coll.find()
 { "_id" : ObjectId("523a9c60c539b977369641a8"), "key1" : 1, "key2" : 1 }
+
+Updating documents to 'coll' collection:
+test:Mongo > db.coll.update({ key1: 1 }, {$set: { key2: 2 }})
+test:Mongo > db.coll.find()
+{ "_id" : ObjectId("523a9c60c539b977369641a8"), "key1" : 1, "key2" : 2 }
