@@ -1,0 +1,9 @@
+mongo > db.runCommand("logRotate") <=> db.adminCommand({ "logRotate" : 1 })
+	Create a new mongod log file and the old one is renamed
+
+mongo > show log rs <=> db.runCommand( { getLog : "rs" } )
+	Display all the replication logs. This includes all the upevents and downevents for members
+	
+mongo > db.adminCommand({setParameter:1, logLevel:4})	// 0 to 5 are allowed
+	Change the verbosity of logging
+	
