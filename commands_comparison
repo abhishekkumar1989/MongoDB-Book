@@ -1,0 +1,12 @@
+db.test.remove() Vs db.test.drop()
+
+Mongo > db.test.remove()
+* Consumes more time
+* Collection is not removed, but all the documents are deleted
+* All the metadata still exists for the collection
+* Indexes are not removed
+
+Mongo > db.test.drop()
+* Completed within fraction
+* Collection is dropped
+* All the metadata including the indexes are removed
