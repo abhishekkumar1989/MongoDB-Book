@@ -72,4 +72,17 @@ Mongo > db.test.find({ x : { $gt : 5, $lt : 20}}).explain()
 Check the limit of x: [10, infinity), this means almost all the index range is scanned.
 
 This can be solved by providing index range:
-Mongo > db.test.find({ x : { $gt : 5, $lt : 20}}).min(5).max(20)
+Mongo > db.test.find({ x : { $gt : 5, $lt : 20}}).min({x: 5}).max({x:20}).explain()
+{
+	"cursor" : "BtreeCursor x_1",
+	"isMultiKey" : true,
+	"indexBounds" : {
+		"start" : {
+			"x" : 5
+		},
+		"end" : {
+			"x" : 20
+		}
+	},
+	...
+}
