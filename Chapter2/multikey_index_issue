@@ -72,4 +72,37 @@ Mongo > db.test.find({ x : { $gt : 5, $lt : 20}}).explain()
 Check the limit of x: [10, infinity), this means almost all the index range is scanned.
 
 This can be solved by providing index range:
-Mongo > db.test.find({ x : { $gt : 5, $lt : 20}}).min(5).max(20)
+Mongo > db.test.find({ x : { $gt : 5, $lt : 20}}).min({x: 5}).max({x:20}).explain()
+{
+	"cursor" : "BtreeCursor x_1",
+	"isMultiKey" : true,
+	"indexBounds" : {
+		"start" : {
+			"x" : 5
+		},
+		"end" : {
+			"x" : 20
+		}
+	},
+	...
+}
+
+There is one more advantage that we get using these operators:
+--------------------------------------------------------------
+Let, say we want to retrieve documents with criteria { x : { $gt : 10, $lt : 18}}
+So, there is only 1 document which is matching this criteria:
+{ "_id" : ObjectId("523d6022b5b1c93be009826d"), "x" : 15 }
+
+Trying to get this document using normal query:
+Mongo > db.test.find({ x : { $gt : 10, $lt : 18}})
+{ "_id" : ObjectId("523d6022b5b1c93be009826d"), "x" : 15 }
+{ "_id" : ObjectId("523d601eb5b1c93be009826c"), "x" : [ 5, 25 ] }
+This is not working, it is retriving two documents, one of them is unexpected.
+
+Tying to get the document using $elemMatch:
+Mongo > db.test.find({ x : {$elemMatch : { $gt : 10, $lt : 18}}})	// no result
+$elemMatch works on array elements only
+
+Using $min and $max to get the document:
+Mongo > db.test.find({ x : { $gt : 10, $lt : 18}}).min({x: 10}).max({x:18})	// worked
+{ "_id" : ObjectId("523d6022b5b1c93be009826d"), "x" : 15 }		
