@@ -1,0 +1,5 @@
+mongo --quiet --host <host1> -u<user> -p<password> <db-name1> < ~/slow_query_profile.js > /tmp/profile_query_results 2>&1
+mongo --quiet --host <host1> -u<user> -p<password> <db-name2> < ~/slow_query_profile.js > /tmp/profile_query_results 2>&1
+mongo --quiet --host <host2> -u<user> -p<password> <db-name> < ~/slow_query_profile.js >> /tmp/profile_query_results 2>&1
+mongo --quiet --host <host3> -u<user> -p<password> <db-name> < ~/slow_query_profile.js >> /tmp/profile_query_results 2>&1
+sed '1,4d' /tmp/profile_query_results | grep -v "^bye$" | mailx -s "Mongo : Slow queries reports" <email-id1>,<email-id2>,<email-id3>
